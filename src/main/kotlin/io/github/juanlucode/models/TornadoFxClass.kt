@@ -1,6 +1,7 @@
 package io.github.juanlucode.models
 
 import org.jdom2.Document
+import org.jdom2.Element
 import java.io.File
 
 class TornadoFxClass() : ClassFile() {
@@ -14,22 +15,30 @@ class TornadoFxClass() : ClassFile() {
 
         println("Fichero origen: ${document.baseURI.toString()}")
 
-        val rootNode = document.rootElement
-
-        println("Root: ${rootNode.name}")
-
-        println("Atributos de root")
-        for (attr in rootNode.attributes) println("${attr.name}: ${attr.value}")
-
-        println("Hijos")
-        for (child in rootNode.children){
-            for (child2 in child.children) {
-                println(child2.name)
-                for (attr in child2.attributes) println("\t ${attr.name}: ${attr.value}")
-            }
-        }
+        writeElement(document.rootElement)
 
         //return File(document.baseURI)
         return File("testTornadofx")
+    }
+
+    private fun writeElement(element: Element){
+
+        // write its name and open brackets
+        println("${element.name} {")
+
+        // write its attributes
+        for (attr in element.attributes)
+            println("${attr.name}: ${attr.value}")
+
+        // check if is a container
+        if ( element.getChildren("children") != null){
+            val childrenIt = element.children.iterator()
+            while (childrenIt.hasNext())
+                writeElement(childrenIt.next())
+        }
+
+        // write close brackets
+        println("}")
+
     }
 }
