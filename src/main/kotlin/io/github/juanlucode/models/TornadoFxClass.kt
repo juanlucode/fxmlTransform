@@ -1,11 +1,13 @@
 package io.github.juanlucode.models
 
+import org.jdom2.Content
 import org.jdom2.Document
 import org.jdom2.Element
 import java.io.File
 
 class TornadoFxClass() : ClassFile() {
 
+    private val targetCode = TargetCode.TORNADOFX
 
     override fun generate(document: Document): File {
         /*
@@ -15,8 +17,11 @@ class TornadoFxClass() : ClassFile() {
 
         println("Fichero origen: ${document.baseURI.toString()}")
 
+        getImports(document, targetCode)
+
         writeElement(document.rootElement)
 
+        println(sourceCode.toString())
         //return File(document.baseURI)
         return File("testTornadofx")
     }
@@ -24,11 +29,11 @@ class TornadoFxClass() : ClassFile() {
     private fun writeElement(element: Element){
 
         // write its name and open brackets
-        println("${element.name} {")
+        sourceCode.appendln("${element.name} {")
 
         // write its attributes
         for (attr in element.attributes)
-            println("${attr.name}: ${attr.value}")
+            sourceCode.appendln("${attr.name} = ${attr.value}")
 
         // check if is a container
         if ( element.getChildren("children") != null){
@@ -38,7 +43,7 @@ class TornadoFxClass() : ClassFile() {
         }
 
         // write close brackets
-        println("}")
+        sourceCode.appendln("}")
 
     }
 }
