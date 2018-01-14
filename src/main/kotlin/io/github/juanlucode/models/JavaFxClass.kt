@@ -10,4 +10,11 @@ class JavaFxClass(): ClassFile() {
         return File("testjavafx")
     }
 
+    override fun writeClassHead(document: Document) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun writeDeclarations(document: Document) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }

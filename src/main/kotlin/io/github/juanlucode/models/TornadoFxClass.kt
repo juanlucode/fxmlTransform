@@ -1,6 +1,5 @@
 package io.github.juanlucode.models
 
-import org.jdom2.Content
 import org.jdom2.Document
 import org.jdom2.Element
 import java.io.File
@@ -10,40 +9,61 @@ class TornadoFxClass() : ClassFile() {
     private val targetCode = TargetCode.TORNADOFX
 
     override fun generate(document: Document): File {
-        /*
-        To build name of new class file using document.baseURI.toString to get the name of origin
-        fxml file, change the extension by .kt
-         */
 
-        println("Fichero origen: ${document.baseURI.toString()}")
+        // tab control
+        val tab = Tab()
 
-        getImports(document, targetCode)
+        // imports
+        writeImports(document, targetCode)
 
-        writeElement(document.rootElement)
+        // class head
+        writeClassHead(document)
+
+        tab.inc()
+        sourceCode.appendln(tab.format("override val root = "))
+
+        // write every element of fxml file
+        writeElement(document.rootElement, tab)
+
+        // close class brackets
+        tab.dec()
+        sourceCode.appendln(tab.format("}"))
 
         println(sourceCode.toString())
         //return File(document.baseURI)
         return File("testTornadofx")
     }
 
-    private fun writeElement(element: Element){
+    override protected fun writeClassHead(document: Document){
+        //class Intro: View() {
+        sourceCode.appendln("class ${className(document)}: View() {")
+    }
+
+    override protected fun writeDeclarations(document: Document) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    private fun writeElement(element: Element, tab: Tab){
 
         // write its name and open brackets
-        sourceCode.appendln("${element.name} {")
+        tab.inc()
+        sourceCode.appendln(tab.format("${element.name} {"))
 
         // write its attributes
+        tab.inc()
         for (attr in element.attributes)
-            sourceCode.appendln("${attr.name} = ${attr.value}")
-
+            sourceCode.appendln(tab.format("${attr.name} = ${attr.value}"))
+        tab.dec()
         // check if is a container
         if ( element.getChildren("children") != null){
             val childrenIt = element.children.iterator()
             while (childrenIt.hasNext())
-                writeElement(childrenIt.next())
+                writeElement(childrenIt.next(), tab)
         }
 
         // write close brackets
-        sourceCode.appendln("}")
+        tab.dec()
+        sourceCode.appendln(tab.format("}"))
 
     }
 }
