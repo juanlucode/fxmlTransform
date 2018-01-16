@@ -34,7 +34,7 @@ class TornadoFxClass() : ClassFile() {
         return File("testTornadofx")
     }
 
-    override protected fun writeClassHead(document: Document){
+    override protected fun writeClassHead(document: Document) {
         //class Intro: View() {
         sourceCode.appendln("class ${className(document)}: View() {")
     }
@@ -43,19 +43,23 @@ class TornadoFxClass() : ClassFile() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    private fun writeElement(element: Element, tab: Tab){
+    private fun writeElement(element: Element, tab: Tab) {
 
-        // write its name and open brackets
         tab.inc()
-        sourceCode.appendln(tab.format("${element.name} {"))
-
-        // write its attributes
-        tab.inc()
-        for (attr in element.attributes)
-            sourceCode.appendln(tab.format("${attr.name} = ${attr.value}"))
-        tab.dec()
+        if (false == element.name.equals("children")) {
+            // write its name and open brackets
+            sourceCode.appendln(tab.format("${element.name} {"))
+            println(tab.format("${element.name} {"))
+            // write its attributes
+            tab.inc()
+            for (attr in element.attributes) {
+                sourceCode.appendln(tab.format("${attr.name} = ${attr.value}"))
+                println(tab.format("${attr.name} = ${attr.value}"))
+            }
+            tab.dec()
+        }
         // check if is a container
-        if ( element.getChildren("children") != null){
+        if (element.getChildren("children") != null) {
             val childrenIt = element.children.iterator()
             while (childrenIt.hasNext())
                 writeElement(childrenIt.next(), tab)
@@ -64,6 +68,6 @@ class TornadoFxClass() : ClassFile() {
         // write close brackets
         tab.dec()
         sourceCode.appendln(tab.format("}"))
-
+        println(tab.format("}"))
     }
 }
