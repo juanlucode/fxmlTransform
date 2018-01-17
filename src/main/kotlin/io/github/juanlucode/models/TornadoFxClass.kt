@@ -45,29 +45,30 @@ class TornadoFxClass() : ClassFile() {
 
     private fun writeElement(element: Element, tab: Tab) {
 
-        tab.inc()
+        //tab.inc()
         if (false == element.name.equals("children")) {
             // write its name and open brackets
             sourceCode.appendln(tab.format("${element.name} {"))
-            println(tab.format("${element.name} {"))
+
             // write its attributes
             tab.inc()
             for (attr in element.attributes) {
                 sourceCode.appendln(tab.format("${attr.name} = ${attr.value}"))
-                println(tab.format("${attr.name} = ${attr.value}"))
             }
             tab.dec()
         }
         // check if is a container
         if (element.getChildren("children") != null) {
             val childrenIt = element.children.iterator()
+            tab.inc()
             while (childrenIt.hasNext())
                 writeElement(childrenIt.next(), tab)
+            tab.dec()
         }
 
         // write close brackets
-        tab.dec()
+        //tab.dec()
         sourceCode.appendln(tab.format("}"))
-        println(tab.format("}"))
+
     }
 }
