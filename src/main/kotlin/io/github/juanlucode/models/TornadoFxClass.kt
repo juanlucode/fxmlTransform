@@ -20,13 +20,15 @@ class TornadoFxClass() : ClassFile() {
         writeClassHead(document)
 
         tab.inc()
+        // tab level class header begin
         sourceCode.appendln(tab.format("override val root = "))
 
         // write every element of fxml file
         writeElement(document.rootElement, tab)
 
-        // close class brackets
+        // tab level class header end
         tab.dec()
+        // close class brackets
         sourceCode.appendln(tab.format("}"))
 
         println(sourceCode.toString())
@@ -45,13 +47,13 @@ class TornadoFxClass() : ClassFile() {
 
     private fun writeElement(element: Element, tab: Tab) {
 
-        //tab.inc()
         if (false == element.name.equals("children")) {
             // write its name and open brackets
+            tab.inc()
             sourceCode.appendln(tab.format("${element.name} {"))
 
-            // write its attributes
             tab.inc()
+            // write its attributes
             for (attr in element.attributes) {
                 sourceCode.appendln(tab.format("${attr.name} = ${attr.value}"))
             }
@@ -60,15 +62,14 @@ class TornadoFxClass() : ClassFile() {
         // check if is a container
         if (element.getChildren("children") != null) {
             val childrenIt = element.children.iterator()
-            tab.inc()
             while (childrenIt.hasNext())
                 writeElement(childrenIt.next(), tab)
-            tab.dec()
         }
 
-        // write close brackets
-        //tab.dec()
-        sourceCode.appendln(tab.format("}"))
-
+        if (false == element.name.equals("children")) {
+            // write close brackets
+            sourceCode.appendln(tab.format("}"))
+            tab.dec()
+        }
     }
 }
