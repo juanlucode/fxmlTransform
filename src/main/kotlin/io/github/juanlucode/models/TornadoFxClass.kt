@@ -50,12 +50,31 @@ class TornadoFxClass() : ClassFile() {
         if (false == element.name.equals("children")) {
             // write its name and open brackets
             tab.inc()
-            sourceCode.appendln(tab.format("${element.name} {"))
+            sourceCode.appendln(tab.format("${element.name.toLowerCase()} {"))
+            println(element.name)
+
+            lateinit var control: Class<*>
+                try {
+                    // for controls
+                    //control = Class.forName("javafx.scene.control.${element.name}")
+                    control = Class.forName("javafx.scene.Node")
+
+                } catch (ex: ClassNotFoundException) {
+                    // for layouts (containers)
+                    //control = Class.forName("javafx.scene.layout.${element.name}")
+                    control = Class.forName("javafx.scene.layout.Region")
+                }
 
             tab.inc()
             // write its attributes
             for (attr in element.attributes) {
                 sourceCode.appendln(tab.format("${attr.name} = ${attr.value}"))
+                //println(attr.name)
+                try{
+                    println("${attr.name} : ${control.getDeclaredField(attr.name).type}")
+                } catch(ex: NoSuchFieldException){
+                    println("${attr.name} : indefinido")
+                }
             }
             tab.dec()
         }
