@@ -4,6 +4,10 @@ import org.jdom2.Document
 import java.io.File
 
 class JavaFxClass(): ClassFile() {
+    override fun writeClassBody(document: Document) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun generate(document: Document): File {
         println(document.baseURI)
         //return File(document.baseURI)
@@ -14,7 +18,4 @@ class JavaFxClass(): ClassFile() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun writeDeclarations(document: Document) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 }

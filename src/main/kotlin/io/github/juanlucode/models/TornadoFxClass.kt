@@ -10,26 +10,17 @@ class TornadoFxClass() : ClassFile() {
 
     override fun generate(document: Document): File {
 
-        // tab control
-        val tab = Tab()
-
         // imports
         writeImports(document, targetCode)
 
         // class head
         writeClassHead(document)
 
-        tab.inc()
-        // tab level class header begin
-        sourceCode.appendln(tab.format("override val root = "))
+        // class body
+        writeClassBody(document)
 
-        // write every element of fxml file
-        writeElement(document.rootElement, tab)
-
-        // tab level class header end
-        tab.dec()
         // close class brackets
-        sourceCode.appendln(tab.format("}"))
+        sourceCode.appendln("}")
 
         println(sourceCode.toString())
         //return File(document.baseURI)
@@ -41,8 +32,20 @@ class TornadoFxClass() : ClassFile() {
         sourceCode.appendln("class ${className(document)}: View() {")
     }
 
-    override protected fun writeDeclarations(document: Document) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override protected fun writeClassBody(document: Document) {
+        // tab control
+        val tab = Tab()
+
+        tab.inc()
+        // tab level class header begin
+        sourceCode.appendln(tab.format("override val root = "))
+
+        // write every element of fxml file
+        writeElement(document.rootElement, tab)
+
+        // tab level class header end
+        tab.dec()
+
     }
 
     private fun writeElement(element: Element, tab: Tab) {
@@ -51,29 +54,10 @@ class TornadoFxClass() : ClassFile() {
             // write its name and open brackets
             tab.inc()
             sourceCode.appendln(tab.format("${element.name.toLowerCase()} {"))
-            println(element.name)
-
-            lateinit var control: Class<*>
-                try {
-                    // for controls
-                    control = Class.forName("javafx.scene.control.${element.name}")
-
-                } catch (ex: ClassNotFoundException) {
-                    // for layouts (containers)
-                    //control = Class.forName("javafx.scene.layout.${element.name}")
-                    control = Class.forName("javafx.scene.layout.Region")
-                }
-
             tab.inc()
             // write its attributes
             for (attr in element.attributes) {
-                sourceCode.appendln(tab.format("${attr.name} = ${attr.value}"))
-                //println(attr.name)
-                try{
-                    println("${attr.name} : ${control.getDeclaredField(attr.name).type}")
-                } catch(ex: NoSuchFieldException){
-                    println("${attr.name} : indefinido")
-                }
+                sourceCode.appendln(tab.format("${attr.name} = ${attrValue(element.name, attr)}"))
             }
             tab.dec()
         }
