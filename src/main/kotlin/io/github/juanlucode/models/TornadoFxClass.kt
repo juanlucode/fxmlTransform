@@ -56,8 +56,7 @@ class TornadoFxClass() : ClassFile() {
             lateinit var control: Class<*>
                 try {
                     // for controls
-                    //control = Class.forName("javafx.scene.control.${element.name}")
-                    control = Class.forName("javafx.scene.Node")
+                    control = Class.forName("javafx.scene.control.${element.name}")
 
                 } catch (ex: ClassNotFoundException) {
                     // for layouts (containers)
