@@ -4,19 +4,50 @@ import javafx.embed.swing.JFXPanel
 import org.jdom2.Attribute
 import org.jdom2.Document
 import java.io.File
+import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.StandardOpenOption.*
+import java.nio.file.*
+import java.io.*
 
 
-abstract class ClassFile() {
 
-    protected val sourceCode: StringBuilder = StringBuilder()
+
+abstract class ClassFile(open val targetCode: TargetCode) {
+
+    private lateinit var path: Path
 
     private var nodes = hashMapOf<String, Class<*>>()
 
-    abstract fun generate(document: Document): File
+    protected val sourceCode: StringBuilder = StringBuilder()
+
+    //abstract fun generate(document: Document): File
 
     abstract protected fun writeClassHead(document: Document)
 
     abstract protected fun writeClassBody(document: Document)
+
+    fun generate(document: Document): Boolean {
+        val ok = true
+
+        // imports
+        writeImports(document, targetCode)
+
+        // class head
+        writeClassHead(document)
+
+        // class body
+        writeClassBody(document)
+
+        // close class brackets
+        sourceCode.appendln("}")
+
+        println(sourceCode.toString())
+
+        createFile(document)
+
+        return ok
+    }
 
     /**
      * Get the class name from the name of the source fxml file
@@ -28,6 +59,11 @@ abstract class ClassFile() {
                 originPath.lastIndexOf(File.separator) + 1,
                 originPath.lastIndexOf('.')
         ).capitalize()
+    }
+
+    protected fun fileName(document: Document): String {
+        // todo get the origin path
+        return "./${className(document).plus(targetCode.ext)}"
     }
 
     /*
@@ -96,6 +132,25 @@ abstract class ClassFile() {
                 ex.printStackTrace()
             }
         }
+    }
+
+    private fun createFile(document: Document): Boolean {
+        var ok = true
+        // Convert the string to a
+        // byte array.
+        val data =  sourceCode.toString().toByteArray()
+        val path = Paths.get(fileName(document))
+
+        try {
+            BufferedOutputStream(
+                    Files.newOutputStream(path, CREATE, APPEND)).use { out -> out.write(data, 0, data.size) }
+        } catch (x: IOException) {
+            System.err.println(x)
+            ok = false
+        }
+
+        return ok
+
     }
 
 }

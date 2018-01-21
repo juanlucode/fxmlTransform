@@ -74,6 +74,7 @@ fun main(args: Array<String>) {
     } else
         Transformation(source, target).process()
 
+    exitProcess(0)
 }
 
 

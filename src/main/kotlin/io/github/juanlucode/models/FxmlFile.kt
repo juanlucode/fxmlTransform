@@ -7,7 +7,7 @@ import java.nio.file.Path
 
 data class FxmlFile(val path: Path) {
 
-    fun transform(target: TargetCode): File {
+    fun transform(target: TargetCode): Boolean {
 
         // read xml file
         val document = readFxml()

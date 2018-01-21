@@ -4,28 +4,9 @@ import org.jdom2.Document
 import org.jdom2.Element
 import java.io.File
 
-class TornadoFxClass() : ClassFile() {
+class TornadoFxClass(override val targetCode: TargetCode = TargetCode.TORNADOFX) : ClassFile(targetCode) {
 
-    private val targetCode = TargetCode.TORNADOFX
-
-    override fun generate(document: Document): File {
-
-        // imports
-        writeImports(document, targetCode)
-
-        // class head
-        writeClassHead(document)
-
-        // class body
-        writeClassBody(document)
-
-        // close class brackets
-        sourceCode.appendln("}")
-
-        println(sourceCode.toString())
-        //return File(document.baseURI)
-        return File("testTornadofx")
-    }
+    //private val targetCode = TargetCode.TORNADOFX
 
     override protected fun writeClassHead(document: Document) {
         //class Intro: View() {
