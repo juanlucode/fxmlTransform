@@ -17,14 +17,15 @@ class ScanElementTest {
         // Needs to init javafx runtime
         JFXPanel()
 
-        scanElement("VBox", "prefHeight")
+        scanElement("Label", "prefHeight")
     }
 
     private fun scanElement(elementName: String, prop: String){
         //val control = Class.forName("javafx.scene.control.${elementName}")
 
         val packs = listOf<String>( "javafx.scene.control",
-                                    "javafx.scene.layout"
+                                    "javafx.scene.layout",
+                                    "javafx.scene.image"
                                   )
 
         var control: Class<*>? = null
@@ -43,17 +44,17 @@ class ScanElementTest {
         println("         METHODS          ")
         println("--------------------------")
         println()
-/*
+
         for ( m in control!!.methods)
             if (m.parameterTypes.size > 0) println("${m.name} : ${m.parameterTypes[0].typeName}")
             //println("${m.name} : ${m.genericReturnType.typeName}")
-*/
+
 
 /*
 We obtain the type of property data by examining the type that is returned by its get method (which has no parameter)
  */
 
-        println(control!!.getMethod("get".plus(prop.capitalize())).genericReturnType.typeName)
+        //println(control!!.getMethod("get".plus(prop.capitalize())).genericReturnType.typeName)
 
 
     }

@@ -4,7 +4,7 @@ import javafx.embed.swing.JFXPanel
 import org.jdom2.Attribute
 import org.jdom2.Document
 import java.io.File
-import java.lang.reflect.Type
+
 
 abstract class ClassFile() {
 
@@ -43,15 +43,40 @@ abstract class ClassFile() {
     }
 
     protected fun attrValue(node: String, attr: Attribute): String {
-        return if ( attrType(node, attr).typeName.equals("String")) "\"${attr.value}\"" else attr.value
+        return if (isAttrTypeString(node, attr)) "\"${attr.value}\"" else attr.value
     }
 
     /*
+    DISCARD
     obtain the type of property data by examining the type that is returned by its get method
     (which has no parameter, the best for using with getMethod)
      */
-    private fun attrType(node: String, attr: Attribute ): Type {
-        return nodes.get(node)?.getMethod("get".plus(attr.name.capitalize()))!!.genericReturnType
+    private fun isAttrTypeString(node: String, attr: Attribute): Boolean {
+        var isString = false
+
+        // search method only by primitives parameters
+        val primitiveTypes = arrayOf<Class<*>>(
+                //Byte::class.java,
+                //Short::class.java,
+                //Int::class.java,
+                //Long::class.java,
+                //Float::class.java,
+                //Double::class.java,
+                //Boolean::class.java,
+                Char::class.java,
+                String::class.java
+        )
+
+        val typeIt = primitiveTypes.iterator()
+        while (false == isString && typeIt.hasNext())
+            try {
+                nodes.get(node)?.getMethod("set".plus(attr.name.capitalize()), typeIt.next())
+                isString = true
+            } catch (ex: NoSuchMethodException) {
+
+            }
+
+        return isString
     }
 
     /*
@@ -65,8 +90,8 @@ abstract class ClassFile() {
         for (content in document.content) {
             try {
                 if (content.toString().contains("<?import"))
-                node = Class.forName(content.value)
-                nodes.put(node.canonicalName, node)
+                    node = Class.forName(content.value)
+                nodes.put(node.simpleName, node)
             } catch (ex: ClassNotFoundException) {
                 ex.printStackTrace()
             }
