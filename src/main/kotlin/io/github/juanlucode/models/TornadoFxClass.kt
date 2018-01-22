@@ -36,9 +36,16 @@ class TornadoFxClass(override val targetCode: TargetCode = TargetCode.TORNADOFX)
             tab.inc()
             sourceCode.appendln(tab.format("${element.name.toLowerCase()} {"))
             tab.inc()
+
             // write its attributes
+            var value: String?
             for (attr in element.attributes) {
-                sourceCode.appendln(tab.format("${attr.name} = ${attrValue(element.name, attr)}"))
+                value = attrValue(element.name, attr)
+                if (value == null) {
+                    sourceCode.appendln(tab.format("// Method not supported for that attribute"))
+                    sourceCode.appendln(tab.format("//${attr.name} = ${value}"))
+                }else
+                    sourceCode.appendln(tab.format("${attr.name} "))
             }
             tab.dec()
         }

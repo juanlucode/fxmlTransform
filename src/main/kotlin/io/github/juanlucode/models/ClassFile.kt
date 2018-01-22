@@ -82,41 +82,61 @@ abstract class ClassFile(open val targetCode: TargetCode) {
         sourceCode.appendln()
     }
 
-    protected fun attrValue(node: String, attr: Attribute): String {
-        return if (isAttrTypeString(node, attr)) "\"${attr.value}\"" else attr.value
+    protected fun attrValue(node: String, attr: Attribute): String? {
+        return when ( isAttrTypeString(node, attr) ){
+            TAttr.STRING_TYPE -> {"\"${attr.value}\""}
+            TAttr.NO_STRING_TYPE -> attr.value
+            null -> null
+
+        }
+
     }
 
     /*
-    DISCARD
-    obtain the type of property data by examining the type that is returned by its get method
-    (which has no parameter, the best for using with getMethod)
+    isAttrTypeString
+    check if attribute allows String or char type (the most conflictive).
+    returns:
+    true - allows String or Char
+    false - allows other type
+    null - methods does not exist or doesn't allow any parameter (read only)
      */
-    private fun isAttrTypeString(node: String, attr: Attribute): Boolean {
-        var isString = false
+    private fun isAttrTypeString(node: String, attr: Attribute): TAttr? {
+        var attrType: TAttr? = null
 
         // search method only by primitives parameters
         val primitiveTypes = arrayOf<Class<*>>(
-                //Byte::class.java,
-                //Short::class.java,
-                //Int::class.java,
-                //Long::class.java,
-                //Float::class.java,
-                //Double::class.java,
-                //Boolean::class.java,
                 Char::class.java,
-                String::class.java
+                String::class.java,
+                Byte::class.java,
+                Short::class.java,
+                Int::class.java,
+                Long::class.java,
+                Float::class.java,
+                Double::class.java,
+                Boolean::class.java
         )
 
-        val typeIt = primitiveTypes.iterator()
-        while (false == isString && typeIt.hasNext())
+        // checking String and Char
+        var iType = -1
+        while (++iType < 2 && attrType == null)
             try {
-                nodes.get(node)?.getMethod("set".plus(attr.name.capitalize()), typeIt.next())
-                isString = true
+                nodes.get(node)?.getMethod("set".plus(attr.name.capitalize()), primitiveTypes[iType])
+                attrType = TAttr.STRING_TYPE
             } catch (ex: NoSuchMethodException) {
 
             }
 
-        return isString
+        // checking others
+        iType = 1
+        while (attrType == null && ++iType < primitiveTypes.size)
+            try {
+                nodes.get(node)?.getMethod("set".plus(attr.name.capitalize()), primitiveTypes[iType])
+                attrType = TAttr.NO_STRING_TYPE
+            } catch (ex: NoSuchMethodException) {
+
+            }
+
+        return attrType
     }
 
     /*
