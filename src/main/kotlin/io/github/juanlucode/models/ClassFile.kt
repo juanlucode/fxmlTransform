@@ -63,7 +63,11 @@ abstract class ClassFile(open val targetCode: TargetCode) {
 
     protected fun fileName(document: Document): String {
         // todo get the origin path
-        return "./${className(document).plus(targetCode.ext)}"
+
+
+        val path = Paths.get(document.baseURI.removePrefix("file:")).parent.toAbsolutePath()
+
+        return "${path.toString().plus(File.separator)}${className(document).plus(targetCode.ext)}"
     }
 
     /*

@@ -17,7 +17,7 @@ class ScanElementTest {
         // Needs to init javafx runtime
         JFXPanel()
 
-        scanElement("Label", "prefHeight")
+        scanElement("VBox", "prefHeight")
     }
 
     private fun scanElement(elementName: String, prop: String){
