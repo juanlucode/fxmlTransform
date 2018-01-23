@@ -43,9 +43,9 @@ class TornadoFxClass(override val targetCode: TargetCode = TargetCode.TORNADOFX)
                 value = attrValue(element.name, attr)
                 if (value == null) {
                     sourceCode.appendln(tab.format("// Method not supported for that attribute"))
-                    sourceCode.appendln(tab.format("//${attr.name} = ${value}"))
+                    sourceCode.appendln(tab.format("//${attr.name} = ${attr.value}"))
                 }else
-                    sourceCode.appendln(tab.format("${attr.name} "))
+                    sourceCode.appendln(tab.format("${attr.name} = ${value}"))
             }
             tab.dec()
         }

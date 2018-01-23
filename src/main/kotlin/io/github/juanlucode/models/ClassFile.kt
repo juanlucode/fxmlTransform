@@ -30,6 +30,9 @@ abstract class ClassFile(open val targetCode: TargetCode) {
     fun generate(document: Document): Boolean {
         val ok = true
 
+        // infoComment
+        infoComment()
+
         // imports
         writeImports(document, targetCode)
 
@@ -47,6 +50,23 @@ abstract class ClassFile(open val targetCode: TargetCode) {
         createFile(document)
 
         return ok
+    }
+
+    /*
+        Insert comment head
+     */
+    protected fun infoComment(){
+        sourceCode.appendln("// *******************************************************************************")
+        sourceCode.appendln("// ${targetCode.toString()} view")
+        sourceCode.appendln("// Automatically generated code by fxmlTransform")
+        sourceCode.appendln("// By Juan Luis Garcia Rodríguez - 2018")
+        sourceCode.appendln("// ")
+        sourceCode.appendln("// https://github.com/juanlucode/fxmlTransform")
+        sourceCode.appendln("// https://twitter.com/juanlucode")
+        sourceCode.appendln("// https://www.linkedin.com/in/juan-luis-garc%C3%ADa-rodr%C3%ADguez-354919133/")
+        sourceCode.appendln("// *******************************************************************************")
+        sourceCode.appendln()
+        sourceCode.appendln()
     }
 
     /**
@@ -167,7 +187,7 @@ abstract class ClassFile(open val targetCode: TargetCode) {
 
         try {
             BufferedOutputStream(
-                    Files.newOutputStream(path, CREATE, APPEND)).use { out -> out.write(data, 0, data.size) }
+                    Files.newOutputStream(path, CREATE)).use { out -> out.write(data, 0, data.size) }
         } catch (x: IOException) {
             System.err.println(x)
             ok = false
