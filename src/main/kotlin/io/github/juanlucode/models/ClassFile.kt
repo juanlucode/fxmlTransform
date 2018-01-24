@@ -93,11 +93,11 @@ abstract class ClassFile(open val targetCode: TargetCode) {
     /*
     write imports using node references
      */
-    protected fun writeImports(document: Document, target: TargetCode) {
+    protected fun writeImports(document: Document) {
         getNodeRefs(document)
         val nodeIterator = nodes.values.iterator()
         while (nodeIterator.hasNext())
-            sourceCode.appendln("import ${nodeIterator.next().name}${if (target == TargetCode.JAVAFX) ';' else ' '}")
+            sourceCode.appendln("import ${nodeIterator.next().name}${if (targetCode == TargetCode.JAVAFX) ';' else ' '}")
 
         sourceCode.appendln()
     }
@@ -167,11 +167,20 @@ abstract class ClassFile(open val targetCode: TargetCode) {
         JFXPanel()
 
         lateinit var node: Class<*>
-        for (content in document.content) {
+
+        if ( targetCode == TargetCode.JAVAFX ) {
+            for (content in document.content) {
+                try {
+                    if (content.toString().contains("<?import"))
+                        node = Class.forName(content.value)
+                    nodes.put(node.simpleName, node)
+                } catch (ex: ClassNotFoundException) {
+                    ex.printStackTrace()
+                }
+            }
+        } else if ( targetCode == TargetCode.TORNADOFX ) {
             try {
-                if (content.toString().contains("<?import"))
-                    node = Class.forName(content.value)
-                nodes.put(node.simpleName, node)
+                node = Class.forName("tornadofx.*")
             } catch (ex: ClassNotFoundException) {
                 ex.printStackTrace()
             }
