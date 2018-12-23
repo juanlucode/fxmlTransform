@@ -34,7 +34,7 @@ abstract class ClassFile(open val targetCode: TargetCode) {
         infoComment()
 
         // imports
-        writeImports(document, targetCode)
+        writeImports(document)
 
         // class head
         writeClassHead(document)
